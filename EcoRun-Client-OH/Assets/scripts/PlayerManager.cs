@@ -26,6 +26,9 @@ public class PlayerManager : MonoBehaviour
 
     private Coroutine resetSpriteCoroutine;
 
+    public HeartManager heartManager;
+    public int heartIndex = 0;
+
     void Start()
     {
         startPosition = transform.position; // 시작 위치 저장
@@ -118,7 +121,8 @@ public class PlayerManager : MonoBehaviour
         {
             if (scoreScript != null)
             {
-                scoreScript.DecreaseScore();
+                heartManager.DestroyHeart(heartIndex);
+                heartIndex++;
             }
             else
             {

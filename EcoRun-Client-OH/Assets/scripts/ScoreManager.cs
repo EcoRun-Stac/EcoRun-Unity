@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Schema;
+using UnityEngine.SceneManagement;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class ScoreManager : MonoBehaviour
     private int score = 0; // 현재 점수
     public int total = 100;
     public int coin = 0;
+    public HeartManager heartManager;
+    public int HeartCount = 0;
 
     void Start()
     {
@@ -19,7 +22,7 @@ public class ScoreManager : MonoBehaviour
 
     void UpdateScore()
     {
-        Debug.Log(coin);
+        // Debug.Log(coin);
         scoreText.text = string.Format("X {0:D3}", coin);
     }
 
@@ -33,10 +36,18 @@ public class ScoreManager : MonoBehaviour
         UpdateScore();
     }
 
-    public void DecreaseScore()
-    {
-        
-    }
+    // public void DecreaseScore()
+    // {
+    //     if(HeartCount < 5)
+    //     {
+    //         heartManager.DestroyHeart(HeartCount);
+    //         HeartCount++;
+    //     }
+    //     else
+    //     {
+    //         SceneManager.LoadScene("GameOver");
+    //     }
+    // }
 
     // IEnumerator UpdateScoreText()
     // {
