@@ -103,6 +103,7 @@ public class PlayerManager : MonoBehaviour
 
         if (other.CompareTag("Coin"))
         {
+            Debug.Log("coin");
             if (scoreScript != null)
             {
                 scoreScript.IncreaseScore(); // 점수 증가
