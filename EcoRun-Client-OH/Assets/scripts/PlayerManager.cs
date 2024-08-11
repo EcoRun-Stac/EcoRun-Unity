@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-
+using UnityEngine.UI; // UI 네임스페이스 추가
 
 public class PlayerManager : MonoBehaviour
 {
@@ -22,45 +21,47 @@ public class PlayerManager : MonoBehaviour
 
     // ScoreManager를 특정 네임스페이스로 명시
     public ScoreManager scoreScript; // 점수를 관리하는 스크립트 (에디터에서 할당)
+    public Button jumpButton; // Jump 버튼
+    public Button slideButton; // Slide 버튼
 
     private Coroutine resetSpriteCoroutine;
+
     void Start()
     {
         startPosition = transform.position; // 시작 위치 저장
         spriteRenderer = GetComponent<SpriteRenderer>(); // SpriteRenderer 컴포넌트를 가져옴
+        defaultSprite = spriteRenderer.sprite; // 기본 스프라이트 저장
 
-        if (spriteRenderer == null)
+        // 에디터에서 scoreManager가 할당되었는지 확인
+        if (scoreScript == null)
         {
-            Debug.LogError("SpriteRenderer가 " + gameObject.name + " 오브젝트에 없습니다!");
-            return;
+            Debug.LogError("ScoreManager가 할당되지 않았습니다. 에디터에서 ScoreManager를 PlayerManager에 할당하세요.");
         }
 
-        defaultSprite = spriteRenderer.sprite; // 기본 스프라이트 저장
+        // 버튼에 이벤트 추가
+        jumpButton.onClick.AddListener(Jump);
+        slideButton.onClick.AddListener(Slide);
     }
-
 
     void Update()
     {
+        // 점프 및 슬라이드 로직 그대로 유지
         if (isJumping)
         {
-            // 점프 시간 경과에 따른 캐릭터 위치 업데이트
             jumpTimer += Time.deltaTime;
             float t = jumpTimer / jumpDuration;
 
             if (t < 0.5f)
             {
-                // 위로 이동
                 transform.position = Vector3.Lerp(startPosition, startPosition + Vector3.up * jumpHeight, t * 2);
             }
             else
             {
-                // 아래로 이동
                 transform.position = Vector3.Lerp(startPosition + Vector3.up * jumpHeight, startPosition, (t - 0.5f) * 2);
             }
 
             if (jumpTimer >= jumpDuration)
             {
-                // 점프 종료
                 transform.position = startPosition;
                 isJumping = false;
                 jumpTimer = 0f; // 타이머 초기화
