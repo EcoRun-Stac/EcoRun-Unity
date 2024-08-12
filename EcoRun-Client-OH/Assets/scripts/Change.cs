@@ -8,4 +8,9 @@ public class Change : MonoBehaviour
     {
         SceneManager.LoadScene("SampleScene");
     }
+
+    public void ReplayGame()
+    {
+        SceneManager.LoadScene("SampleScene");
+    }
 }
