@@ -6,7 +6,7 @@ public class GaugeManager : MonoBehaviour
 {
     public int coinCount = 0; // 현재 코인 수
     public Slider coinProgressBar; // 슬라이더 UI
-    public int maxCoins = 100; // 최대 코인 수 (게임 종료 기준)
+    public int maxCoins = 350; // 최대 코인 수 (게임 종료 기준)
     public PlayerManager playerManager;
 
     void Start()

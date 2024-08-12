@@ -13,7 +13,7 @@ public class PauseManager : MonoBehaviour
     private Image buttonImage;    // 버튼의 이미지 컴포넌트
     public PlayerManager playerManager;
 
-    private bool isPaused = true;
+    private bool isPaused = false;
 
     void Start()
     {
