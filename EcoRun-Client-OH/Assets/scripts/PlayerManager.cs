@@ -89,6 +89,7 @@ public class PlayerManager : MonoBehaviour
 
     public void Slide()
     {
+        Debug.Log("sliding");
         isSliding = true;
         spriteRenderer.sprite = slideSprite; // 슬라이드 스프라이트로 변경
 
@@ -121,7 +122,7 @@ public class PlayerManager : MonoBehaviour
         {
             if (scoreScript != null)
             {
-                heartManager.DestroyHeart(heartIndex);
+                scoreScript.DecreaseHeart();
                 heartIndex++;
             }
             else

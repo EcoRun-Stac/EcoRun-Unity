@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 0}
-  total: 100
-  coin: 0
+  heartCount: 0
+  heartManager: {fileID: 4919704113474678851, guid: 76100fc50cdf1844eaa4c6ad9ee10ef3, type: 3}
