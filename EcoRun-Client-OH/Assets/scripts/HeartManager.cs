@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HeartManager : MonoBehaviour
 {
+    private SpriteRenderer spriteRenderer;
     public GameObject[] heartObjects;
+    public Sprite emptyHeart;
 
     void Start()
     {
@@ -14,14 +17,15 @@ public class HeartManager : MonoBehaviour
     public void DestroyHeart(int index)
     {
         Debug.Log("destroy");
+        SpriteRenderer sr = heartObjects[index].GetComponent<SpriteRenderer>();
         if (index >= 0 && index < heartObjects.Length)
         {
-            Destroy(heartObjects[index]);
-            heartObjects[index] = null; // 제거된 하트를 null로 설정
+            sr.sprite = emptyHeart;
         }
         else
         {
-            Debug.LogError("잘못된 인덱스: " + index);
+            /*SceneManager.LoadScene("GameOver");*/
+            Debug.Log("gameover");
         }
     }
 }

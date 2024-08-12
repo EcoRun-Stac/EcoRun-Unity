@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI; // UI 네임스페이스 추가
 
 public class PlayerManager : MonoBehaviour
@@ -29,8 +31,15 @@ public class PlayerManager : MonoBehaviour
     public HeartManager heartManager;
     public int heartIndex = 0;
 
+    public GameObject gameOverUI;
+    public TextMeshProUGUI scoreText;
+    public GameObject[] stars;
+    public int score = 0;
+    public int gauge = 0;
+
     void Start()
     {
+        gameOverUI.SetActive(false);
         startPosition = transform.position; // 시작 위치 저장
         spriteRenderer = GetComponent<SpriteRenderer>(); // SpriteRenderer 컴포넌트를 가져옴
         defaultSprite = spriteRenderer.sprite; // 기본 스프라이트 저장
@@ -89,6 +98,7 @@ public class PlayerManager : MonoBehaviour
 
     public void Slide()
     {
+        Debug.Log("sliding");
         isSliding = true;
         spriteRenderer.sprite = slideSprite; // 슬라이드 스프라이트로 변경
 
@@ -99,17 +109,47 @@ public class PlayerManager : MonoBehaviour
         }
         resetSpriteCoroutine = StartCoroutine(ResetSpriteAfterDelay(slideDuration));
     }
+    
+    public void GameStart()
+    {
+        gameOverUI.SetActive(false);
+        Time.timeScale = 1f;
+    }
+    public void GamePause()
+    {
+        gameOverUI.SetActive(true);
+        scoreText.text = score + "m";
+
+        Debug.Log("endGame start");
+        if (heartIndex != 0)
+        {
+            Destroy(stars[0]);
+        }
+        if (score < 100)
+        {
+            Destroy(stars[1]);
+        }
+
+        Time.timeScale = 0f; // 게임 일시정지
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Trigger entered with: " + other.gameObject.name);
+        gauge++;
 
         if (other.CompareTag("Coin"))
         {
             Debug.Log("coin");
             if (scoreScript != null)
             {
+                score++;
                 scoreScript.IncreaseScore(); // 점수 증가
+                FindObjectOfType<GaugeManager>().AddCoin();
+
+                if (score == 100)
+                {
+                    GamePause();
+                }
             }
             else
             {
@@ -121,14 +161,21 @@ public class PlayerManager : MonoBehaviour
         {
             if (scoreScript != null)
             {
-                heartManager.DestroyHeart(heartIndex);
+                scoreScript.DecreaseHeart();
                 heartIndex++;
             }
-            else
+            
+            if(heartIndex > 4)
             {
-                Debug.LogError("ScoreManager is null when trying to decrease score.");
+                SceneManager.LoadScene("GameOver");
+                Debug.Log("heartIndex gameover");
             }
             Destroy(other.gameObject);
+        }
+
+        if(gauge == 350)
+        {
+            GamePause();
         }
     }
 }
