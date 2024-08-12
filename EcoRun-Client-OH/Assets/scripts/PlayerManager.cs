@@ -33,6 +33,9 @@ public class PlayerManager : MonoBehaviour
 
     public GameObject gameOverUI;
     public TextMeshProUGUI scoreText;
+    public GameObject[] stars;
+    public int score = 0;
+    public int gauge = 0;
 
     void Start()
     {
@@ -107,24 +110,41 @@ public class PlayerManager : MonoBehaviour
         resetSpriteCoroutine = StartCoroutine(ResetSpriteAfterDelay(slideDuration));
     }
 
-    public void EndGame()
+    public void GameOver()
     {
         gameOverUI.SetActive(true);
         scoreText.text = score + "m";
+
+        Debug.Log("endGame start");
+        if (heartIndex != 0)
+        {
+            Destroy(stars[0]);
+        }
+        if (score < 100)
+        {
+            Destroy(stars[1]);
+        }
+
         Time.timeScale = 0f; // 게임 일시정지
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Trigger entered with: " + other.gameObject.name);
+        gauge++;
 
         if (other.CompareTag("Coin"))
         {
             Debug.Log("coin");
             if (scoreScript != null)
             {
+                score++;
                 scoreScript.IncreaseScore(); // 점수 증가
                 FindObjectOfType<GaugeManager>().AddCoin();
+
+                if (score == 100)
+                {
+                    GameOver();
+                }
             }
             else
             {
@@ -143,8 +163,14 @@ public class PlayerManager : MonoBehaviour
             if(heartIndex > 4)
             {
                 SceneManager.LoadScene("GameOver");
+                Debug.Log("heartIndex gameover");
             }
             Destroy(other.gameObject);
+        }
+
+        if(gauge == 350)
+        {
+            GameOver();
         }
     }
 }

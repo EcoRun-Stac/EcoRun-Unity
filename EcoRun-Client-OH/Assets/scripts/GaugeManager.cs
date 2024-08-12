@@ -7,6 +7,7 @@ public class GaugeManager : MonoBehaviour
     public int coinCount = 0; // 현재 코인 수
     public Slider coinProgressBar; // 슬라이더 UI
     public int maxCoins = 100; // 최대 코인 수 (게임 종료 기준)
+    public PlayerManager playerManager;
 
     void Start()
     {
@@ -40,6 +41,5 @@ public class GaugeManager : MonoBehaviour
     {
         // 게임 종료 처리
         Debug.Log("100 Coins Collected! Game Over!");
-        SceneManager.LoadScene("GameOver"); // 게임 오버 씬을 로드 (GameOver 씬이 빌드에 포함되어야 함)
     }
 }
