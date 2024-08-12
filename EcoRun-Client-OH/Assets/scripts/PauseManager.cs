@@ -1,16 +1,27 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PauseManager : MonoBehaviour
 {
-    public GameObject pauseMenuUI; // 일시정지 메뉴 UI를 연결
+    public Button myButton;       // 버튼 컴포넌트
+    public Sprite stopSprite;
+    public Sprite playSprite;
+    private Image buttonImage;    // 버튼의 이미지 컴포넌트
+    public PlayerManager playerManager;
 
     private bool isPaused = true;
 
     void Start()
     {
-        TogglePause();
+        buttonImage = myButton.GetComponent<Image>();
+
+        // 버튼 클릭 이벤트에 메서드 등록
+        myButton.onClick.AddListener(TogglePause);
+
     }
 
     public void TogglePause()
@@ -24,19 +35,24 @@ public class PauseManager : MonoBehaviour
         else
         {
             ResumeGame();
+
         }
     }
 
     public void PauseGame()
     {
-        pauseMenuUI.SetActive(true); // 일시정지 메뉴 표시
+        buttonImage.sprite = playSprite;
+        FindObjectOfType<PlayerManager>().GamePause();
         Time.timeScale = 0f; // 게임 일시정지
+
     }
 
     public void ResumeGame()
     {
-        pauseMenuUI.SetActive(false); // 일시정지 메뉴 숨기기
+        buttonImage.sprite = stopSprite;
+        FindObjectOfType<PlayerManager>().GameStart();
         Time.timeScale = 1f; // 게임 재개
+
     }
 }
 

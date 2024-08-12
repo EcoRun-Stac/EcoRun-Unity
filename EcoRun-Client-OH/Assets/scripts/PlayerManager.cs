@@ -109,8 +109,13 @@ public class PlayerManager : MonoBehaviour
         }
         resetSpriteCoroutine = StartCoroutine(ResetSpriteAfterDelay(slideDuration));
     }
-
-    public void GameOver()
+    
+    public void GameStart()
+    {
+        gameOverUI.SetActive(false);
+        Time.timeScale = 1f;
+    }
+    public void GamePause()
     {
         gameOverUI.SetActive(true);
         scoreText.text = score + "m";
@@ -143,7 +148,7 @@ public class PlayerManager : MonoBehaviour
 
                 if (score == 100)
                 {
-                    GameOver();
+                    GamePause();
                 }
             }
             else
@@ -170,7 +175,7 @@ public class PlayerManager : MonoBehaviour
 
         if(gauge == 350)
         {
-            GameOver();
+            GamePause();
         }
     }
 }
