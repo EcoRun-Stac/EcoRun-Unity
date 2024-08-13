@@ -13,6 +13,7 @@ public class Change : MonoBehaviour
     public void ReplayGame()
     {
         SceneManager.LoadScene("SampleScene");
+        GaugeManager.scoreCount = 0;
         Time.timeScale = 1f;
     }
 

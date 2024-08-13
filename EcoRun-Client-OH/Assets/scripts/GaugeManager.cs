@@ -63,7 +63,7 @@ public class GaugeManager : MonoBehaviour
     {
         if (scoreText != null)
         {
-            scoreText.text = string.Format("X {0:D3}", scoreCount);
+            scoreText.text = scoreCount + "m";
         }
         else
         {
