@@ -4,44 +4,83 @@ using UnityEngine;
 
 public class ScrewSpawner : MonoBehaviour
 {
-    public GameObject CoinPrefab;
-    public GameObject EnemyPrefab;
-    public float timeBetSpawnMin = 0f;
-    public float timeBetSpawnMax = 10f;
-    private float timeBetSpawn; //다음배치까지의 시간 간격
-    private float xPos = 20f; // x 소환 위치
-    private float lastSpawnTime;
-    public int time = 0;
-    // Start is called before the first frame update
-    void Start()
+    public enum ObjectType { Rock, Grass, Net, Attack, Fish } // 오브젝트 타입을 구분하기 위한 enum
+
+    [System.Serializable]
+    public class ObjectInfo
     {
-        this.timeBetSpawn = 0;
-        this.lastSpawnTime = 0;
+        public ObjectType type;   // 오브젝트 타입 (Rock, Grass, Net, Attack)
+        public Vector3 position;  // 오브젝트 위치 (x, y, z 좌표)
     }
 
-    // Update is called once per frame
+    public GameObject rockPrefab;
+    public GameObject grassPrefab;
+    public GameObject netPrefab;
+    public GameObject attackPrefab;
+    public GameObject fishPrefab;
+
+    // 생성 간격을 2초로 고정
+    public float timeBetSpawn = 2f;
+
+    private float lastSpawnTime;
+    private int currentIndex = 0; // 리스트에서 현재 생성할 오브젝트의 인덱스
+
+    // 오브젝트 정보를 저장하는 리스트
+    public List<ObjectInfo> objectsToSpawn;
+
+    void Start()
+    {
+        this.lastSpawnTime = Time.time;
+    }
+
     void Update()
     {
-        time++;
         if (Time.time >= lastSpawnTime + timeBetSpawn)
         {
-            //기록된 마지막 배치 시점을 현재 시점으로 갱신
+            // 기록된 마지막 배치 시점을 현재 시점으로 갱신
             this.lastSpawnTime = Time.time;
-            //다음 배치까지의 시간 간격을 사이에서 랜덤 설정
-            this.timeBetSpawn = 0.2f;
-            //
-            newObject();
+
+            // 리스트에서 현재 인덱스의 오브젝트 정보를 기반으로 새로운 오브젝트 생성
+            if (objectsToSpawn != null && objectsToSpawn.Count > 0)
+            {
+                SpawnObject(objectsToSpawn[currentIndex]);
+
+                // 다음 인덱스로 이동, 리스트의 끝에 도달하면 다시 처음으로
+                currentIndex = (currentIndex + 1) % objectsToSpawn.Count;
+            }
         }
     }
-    public void newObject()
+
+    public void SpawnObject(ObjectInfo info)
     {
-        if (time%10 == 3)
+        GameObject prefabToSpawn = null;
+
+        // 오브젝트 타입에 따라 프리팹 선택
+        switch (info.type)
         {
-            Instantiate(EnemyPrefab, new Vector3(14.23f, -1.415f, 0), Quaternion.identity);
+            case ObjectType.Rock:
+                prefabToSpawn = rockPrefab;
+                break;
+            case ObjectType.Grass:
+                prefabToSpawn = grassPrefab;
+                break;
+            case ObjectType.Net:
+                prefabToSpawn = netPrefab;
+                break;
+            case ObjectType.Attack:
+                prefabToSpawn = attackPrefab;
+                break;
+            case ObjectType.Fish:
+                prefabToSpawn = fishPrefab;
+                break;
         }
-        else
+
+        // 프리팹이 선택되었으면 해당 위치에 오브젝트 생성
+        if (prefabToSpawn != null)
         {
-            Instantiate(CoinPrefab, new Vector3(14.23f, -1.415f, 0), Quaternion.identity);
+            Instantiate(prefabToSpawn, info.position, Quaternion.identity);
         }
+
+        Debug.Log("Spawned: " + info.type + " at " + Time.time);
     }
 }
