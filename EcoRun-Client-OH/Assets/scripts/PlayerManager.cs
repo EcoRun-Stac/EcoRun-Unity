@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI; // UI 네임스페이스 추가
@@ -37,10 +39,17 @@ public class PlayerManager : MonoBehaviour
     public int score = 0;
     public int gauge = 0;
 
+    public Sprite BigEmptyStar;
+    public Sprite SmallEmptyStar;
+
+    public GameObject focusObject; // Focus 오브젝트를 에디터에서 할당
+    private Vector3 focusOriginalPosition;
+
     void Start()
     {
         gameOverUI.SetActive(false);
         startPosition = transform.position; // 시작 위치 저장
+        focusOriginalPosition = focusObject.transform.position;
         spriteRenderer = GetComponent<SpriteRenderer>(); // SpriteRenderer 컴포넌트를 가져옴
         defaultSprite = spriteRenderer.sprite; // 기본 스프라이트 저장
 
@@ -66,10 +75,12 @@ public class PlayerManager : MonoBehaviour
             if (t < 0.5f)
             {
                 transform.position = Vector3.Lerp(startPosition, startPosition + Vector3.up * jumpHeight, t * 2);
+                focusObject.transform.position = Vector3.Lerp(focusOriginalPosition, focusOriginalPosition + Vector3.up * jumpHeight, t*2);
             }
             else
             {
                 transform.position = Vector3.Lerp(startPosition + Vector3.up * jumpHeight, startPosition, (t - 0.5f) * 2);
+                focusObject.transform.position = Vector3.Lerp(focusOriginalPosition + Vector3.up * jumpHeight, focusOriginalPosition, (t - 0.5f) * 2);
             }
 
             if (jumpTimer >= jumpDuration)
@@ -118,16 +129,23 @@ public class PlayerManager : MonoBehaviour
     public void GamePause()
     {
         gameOverUI.SetActive(true);
-        scoreText.text = score + "m";
+        scoreText.text = GaugeManager.scoreCount + "m";
 
         Debug.Log("endGame start");
-        if (heartIndex != 0)
+        if (heartIndex > 1)
         {
-            Destroy(stars[0]);
+            SpriteRenderer sr = stars[0].GetComponent<SpriteRenderer>();
+            sr.sprite = BigEmptyStar;
         }
         if (score < 100)
         {
-            Destroy(stars[1]);
+            SpriteRenderer sr = stars[1].GetComponent<SpriteRenderer>();
+            sr.sprite = SmallEmptyStar;
+        }
+        if(GaugeManager.scoreCount < 100)
+        {
+            SpriteRenderer sr = stars[2].GetComponent<SpriteRenderer>();
+            sr.sprite = SmallEmptyStar;
         }
 
         Time.timeScale = 0f; // 게임 일시정지
@@ -135,21 +153,12 @@ public class PlayerManager : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        gauge++;
-
         if (other.CompareTag("Coin"))
         {
-            Debug.Log("coin");
             if (scoreScript != null)
             {
+                scoreScript.IncreaseItem(); // 점수 증가
                 score++;
-                scoreScript.IncreaseScore(); // 점수 증가
-                FindObjectOfType<GaugeManager>().AddCoin();
-
-                if (score == 100)
-                {
-                    GamePause();
-                }
             }
             else
             {
@@ -157,7 +166,7 @@ public class PlayerManager : MonoBehaviour
             }
             Destroy(other.gameObject); // 코인 제거
         }
-        else if (other.CompareTag("Enemy"))
+        else if (other.CompareTag("Enemy") || other.CompareTag("Attack"))
         {
             if (scoreScript != null)
             {
@@ -173,7 +182,7 @@ public class PlayerManager : MonoBehaviour
             Destroy(other.gameObject);
         }
 
-        if(gauge == 350)
+        if(GaugeManager.scoreCount == 100)
         {
             GamePause();
         }

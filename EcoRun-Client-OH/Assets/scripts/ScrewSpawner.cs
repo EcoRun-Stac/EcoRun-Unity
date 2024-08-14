@@ -81,6 +81,5 @@ public class ScrewSpawner : MonoBehaviour
             Instantiate(prefabToSpawn, info.position, Quaternion.identity);
         }
 
-        Debug.Log("Spawned: " + info.type + " at " + Time.time);
     }
 }

@@ -31,7 +31,6 @@ public class ScoreManager : MonoBehaviour
     {
         item++;
         scoreText.text = string.Format("X {0:D3}", item);
-        Debug.Log(item);
     }
 
     
